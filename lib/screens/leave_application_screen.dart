@@ -10,6 +10,58 @@ class LeaveApplicationScreen extends StatefulWidget {
 class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
   String _leaveType = "Sick Leave";
   final TextEditingController _reasonController = TextEditingController();
+  late int _totalLeaves;
+  late int _leavesRemaining;
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _totalLeaves = _calculateWeeksInMonth();
+    _leavesRemaining = _totalLeaves;
+  }
+
+  int _calculateWeeksInMonth() {
+    final now = DateTime.now();
+    final firstDay = DateTime(now.year, now.month, 1);
+    final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+    int sundays = 0;
+    for (int i = 0; i < daysInMonth; i++) {
+      if (firstDay.add(Duration(days: i)).weekday == DateTime.sunday) {
+        sundays++;
+      }
+    }
+    return sundays;
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStart) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStart ? _startDate : _endDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 30)),
+      lastDate: DateTime(DateTime.now().year + 1),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isStart) {
+          _startDate = picked;
+          if (_endDate.isBefore(_startDate)) {
+            _endDate = _startDate;
+          }
+        } else {
+          _endDate = picked;
+          if (_startDate.isAfter(_endDate)) {
+            _startDate = _endDate;
+          }
+        }
+      });
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,14 +182,16 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                               Expanded(
                                 child: _buildDatePickerField(
                                   "Start Date",
-                                  "10-02-2024",
+                                  _formatDate(_startDate),
+                                  () => _selectDate(context, true),
                                 ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: _buildDatePickerField(
                                   "End Date",
-                                  "11-02-2024",
+                                  _formatDate(_endDate),
+                                  () => _selectDate(context, false),
                                 ),
                               ),
                             ],
@@ -181,18 +235,45 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFF7ED),
+                              color:
+                                  _leavesRemaining < 1
+                                      ? const Color(0xFFFEF2F2)
+                                      : const Color(0xFFEFF6FF),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: const Color(0xFFFFEDD5),
+                                color:
+                                    _leavesRemaining < 1
+                                        ? const Color(0xFFFECACA)
+                                        : const Color(0xFFBFDBFE),
                               ),
                             ),
-                            child: const Text(
-                              "Note: Leave applications must be submitted at least 2 days in advance for approval.",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF9A3412),
-                              ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _leavesRemaining < 1
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.info_outline,
+                                  color:
+                                      _leavesRemaining < 1
+                                          ? const Color(0xFFDC2626)
+                                          : const Color(0xFF1E6AFB),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    "Leaves Remaining This Month: $_leavesRemaining (Out of $_totalLeaves)",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          _leavesRemaining < 1
+                                              ? const Color(0xFFDC2626)
+                                              : const Color(0xFF1E6AFB),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -200,7 +281,22 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                             width: double.infinity,
                             height: 54,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                int daysTaken =
+                                    _endDate.difference(_startDate).inDays + 1;
+                                setState(() {
+                                  _leavesRemaining -= daysTaken;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "$daysTaken day(s) leave application submitted",
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                                _reasonController.clear();
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF1E6AFB),
                                 shape: RoundedRectangleBorder(
@@ -227,54 +323,6 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Leave History
-                    Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Leave History",
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          _buildHistoryItem(
-                            "Sick Leave",
-                            "Feb 5 - Feb 5, 2024",
-                            "1 day(s)",
-                            "Approved",
-                            Colors.green,
-                          ),
-                          const Divider(height: 32),
-                          _buildHistoryItem(
-                            "Casual Leave",
-                            "Jan 12 - Jan 14, 2024",
-                            "3 day(s)",
-                            "Approved",
-                            Colors.green,
                           ),
                         ],
                       ),
@@ -334,85 +382,38 @@ class _LeaveApplicationScreenState extends State<LeaveApplicationScreen> {
     );
   }
 
-  Widget _buildDatePickerField(String label, String date) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+  Widget _buildDatePickerField(String label, String date, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(date, style: const TextStyle(fontSize: 14)),
-              const Icon(
-                Icons.calendar_today,
-                size: 16,
-                color: Color(0xFF94A3B8),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHistoryItem(
-    String type,
-    String dateRange,
-    String duration,
-    String status,
-    Color statusColor,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(type, style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(
-              dateRange,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            Text(
-              "Duration: $duration",
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-            ),
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.check_circle, size: 12, color: statusColor),
-              const SizedBox(width: 4),
-              Text(
-                status,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: statusColor,
-                  fontWeight: FontWeight.bold,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(date, style: const TextStyle(fontSize: 14)),
+                const Icon(
+                  Icons.calendar_today,
+                  size: 16,
+                  color: Color(0xFF94A3B8),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
