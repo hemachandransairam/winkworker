@@ -108,68 +108,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Column(
                     children: [
-                      // Balance Card
-                      Container(
-                        margin: const EdgeInsets.all(16),
-                        padding: const EdgeInsets.all(24),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF22C55E), Color(0xFF16A34A)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF22C55E).withOpacity(0.3),
-                              blurRadius: 15,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Available Balance",
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "₹ 85,240.50",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              height: 40,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFF16A34A),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  elevation: 0,
-                                ),
-                                child: const Text(
-                                  "Withdraw Funds",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
+                      const SizedBox(height: 24),
                       // Bank Account Details Card
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -280,7 +219,7 @@ class _PaymentDetailsScreenState extends State<PaymentDetailsScreen> {
                               elevation: 0,
                             ),
                             child: const Text(
-                              "Update Payment Method",
+                              "Request edit",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
