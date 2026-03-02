@@ -12,8 +12,6 @@ class JobCompletedScreen extends StatefulWidget {
 }
 
 class _JobCompletedScreenState extends State<JobCompletedScreen> {
-  String _selectedPayment = "Online";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,25 +125,50 @@ class _JobCompletedScreenState extends State<JobCompletedScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Payment Confirmation Card
+                    // Payment Method Card
                     _buildCard(
-                      title: "Payment Confirmation",
-                      child: Column(
-                        children: [
-                          _buildPaymentOption(
-                            "Online Payment",
-                            "Already paid by customer",
-                            Icons.check_circle,
-                            "Online",
+                      title: "Payment Method",
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          border: Border.all(
+                            color: const Color(0xFF3B82F6),
+                            width: 1.5,
                           ),
-                          const SizedBox(height: 12),
-                          _buildPaymentOption(
-                            "Cash Payment",
-                            "Collected from customer",
-                            Icons.payments_outlined,
-                            "Cash",
-                          ),
-                        ],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  "Online Payment",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Color(0xFF1F2937),
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Chosen by customer",
+                                  style: TextStyle(
+                                    color: Color(0xFF6B7280),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Icon(
+                              Icons.check_circle,
+                              color: Color(0xFF3B82F6),
+                              size: 24,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -311,68 +334,6 @@ class _JobCompletedScreenState extends State<JobCompletedScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentOption(
-    String title,
-    String subtitle,
-    IconData icon,
-    String value,
-  ) {
-    bool isSelected = _selectedPayment == value;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPayment = value;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFEFF6FF) : Colors.white,
-          border: Border.all(
-            color:
-                isSelected ? const Color(0xFF3B82F6) : const Color(0xFFE5E7EB),
-            width: 1.5,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    color: Color(0xFF6B7280),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            Icon(
-              isSelected ? Icons.check_circle : Icons.circle_outlined,
-              color:
-                  isSelected
-                      ? const Color(0xFF3B82F6)
-                      : const Color(0xFFD1D5DB),
-              size: 24,
-            ),
-          ],
-        ),
       ),
     );
   }
