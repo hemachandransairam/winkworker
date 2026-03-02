@@ -247,7 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         name: "Ramesh",
                         address: "123 Main St, Downtown",
                         time: "10 : 30 AM",
-                        distance: "2.5 km",
+                        date: "30-08",
                         price: "₹1,169",
                       ),
                     ],
@@ -298,7 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String name,
     required String address,
     required String time,
-    required String distance,
+    required String date,
     required String price,
   }) {
     return Container(
@@ -386,7 +386,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(width: 8),
               Text(
-                distance,
+                date,
                 style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
               ),
             ],
@@ -405,7 +405,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           name: name,
                           address: address,
                           time: time,
-                          distance: distance,
+                          distance: date,
                           price: price,
                         ),
                   ),

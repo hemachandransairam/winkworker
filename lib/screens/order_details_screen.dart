@@ -220,7 +220,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       children: [
                         _buildInfoRow("Scheduled Time", "10:30 AM"),
                         _buildInfoRow("Expected Duration", "45 mins"),
-                        _buildInfoRow("Distance", "2.5 km"),
+                        _buildInfoRow("Date", "30-08"),
                         _buildInfoRow("Payment Method", "ABC-1312"),
                         const SizedBox(height: 12),
                         Container(
