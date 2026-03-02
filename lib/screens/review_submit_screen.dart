@@ -13,7 +13,6 @@ class _ReviewSubmitScreenState extends State<ReviewSubmitScreen> {
   String? _editingSection;
   final Map<String, TextEditingController> _controllers = {};
 
-  late Map<String, String> _workPreferences;
   late Map<String, String> _personalDetails;
   late Map<String, String> _bankDetails;
   bool _isSubmitting = false;
@@ -22,12 +21,6 @@ class _ReviewSubmitScreenState extends State<ReviewSubmitScreen> {
   void initState() {
     super.initState();
     final data = SupabaseService().signupData;
-
-    _workPreferences = {
-      "Work Areas": (data['work_areas'] as List<String>?)?.join(', ') ?? '-',
-      "Services": (data['services'] as List<String>?)?.join(', ') ?? '-',
-      "Availability": data['availability'] ?? '-',
-    };
 
     _personalDetails = {
       "Full Name": data['full_name'] ?? '-',
@@ -99,9 +92,7 @@ class _ReviewSubmitScreenState extends State<ReviewSubmitScreen> {
   void _saveChanges(String title) {
     setState(() {
       Map<String, String> targetMap;
-      if (title == "Work Preferences") {
-        targetMap = _workPreferences;
-      } else if (title == "Personal Details") {
+      if (title == "Personal Details") {
         targetMap = _personalDetails;
       } else {
         targetMap = _bankDetails;
@@ -173,13 +164,6 @@ class _ReviewSubmitScreenState extends State<ReviewSubmitScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         const SizedBox(height: 32),
-
-                        _buildReviewSection(
-                          title: "Work Preferences",
-                          items: _workPreferences,
-                        ),
-
-                        const SizedBox(height: 16),
 
                         _buildReviewSection(
                           title: "Personal Details",
