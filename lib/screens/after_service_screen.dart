@@ -17,13 +17,6 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _takePhoto() async {
-    if (_capturedImages.length >= 3) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Maximum 3 photos allowed")));
-      return;
-    }
-
     final XFile? image = await _picker.pickImage(
       source: ImageSource.camera,
       imageQuality: 70,
@@ -92,7 +85,7 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
                       ),
                       const SizedBox(height: 12),
                       const Text(
-                        "Capture 2-3 clear photos after completing",
+                        "Capture clear photos after completing",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 16,
@@ -108,7 +101,7 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
                         child: CustomPaint(
                           painter: DashedBorderPainter(
                             color:
-                                _capturedImages.length >= 2
+                                _capturedImages.isNotEmpty
                                     ? const Color(0xFF3B82F6)
                                     : const Color(0xFFD1D5DB),
                             strokeWidth: 1.5,
@@ -125,20 +118,18 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  _capturedImages.length >= 2
+                                  _capturedImages.isNotEmpty
                                       ? Icons.check_circle_outline
                                       : Icons.camera_alt_outlined,
                                   size: 48,
                                   color:
-                                      _capturedImages.length >= 2
+                                      _capturedImages.isNotEmpty
                                           ? const Color(0xFF3B82F6)
                                           : const Color(0xFF9CA3AF),
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  _capturedImages.length >= 3
-                                      ? "All Photos Captured"
-                                      : "Tap to Take Photo (${_capturedImages.length}/3)",
+                                  "Tap to Take Photo (${_capturedImages.length} taken)",
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -209,21 +200,18 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed:
-                              _capturedImages.length >= 2
-                                  ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => ServiceSummaryScreen(
-                                              initialAdditionalServices:
-                                                  widget.additionalServices,
-                                            ),
-                                      ),
-                                    );
-                                  }
-                                  : null,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => ServiceSummaryScreen(
+                                      initialAdditionalServices:
+                                          widget.additionalServices,
+                                    ),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF030D21),
                             disabledBackgroundColor: const Color(0xFFE5E7EB),
@@ -232,11 +220,9 @@ class _AfterServiceScreenState extends State<AfterServiceScreen> {
                             ),
                             elevation: 0,
                           ),
-                          child: Text(
-                            _capturedImages.length < 2
-                                ? "Take at least 2 photos"
-                                : "Proceed",
-                            style: const TextStyle(
+                          child: const Text(
+                            "Proceed",
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
