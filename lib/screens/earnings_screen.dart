@@ -123,31 +123,31 @@ class EarningsScreen extends StatelessWidget {
                           const SizedBox(height: 16),
 
                           _buildTransactionCard(
-                            "Premium Wash - Ramesh",
+                            "Premium Wash - #ORD-1092",
                             "Today, 10:30 AM",
                             "₹2,000",
                             const Color(0xFF22C55E),
                           ),
                           _buildTransactionCard(
-                            "Basic Wash - Suresh",
+                            "Basic Wash - #ORD-1091",
                             "Today, 8:00 AM",
                             "₹500",
                             const Color(0xFF22C55E),
                           ),
                           _buildTransactionCard(
-                            "Deluxe Detail - Mandhana",
+                            "Deluxe Detail - #ORD-1090",
                             "Yesterday, 4:30 PM",
                             "₹3,500",
                             const Color(0xFF22C55E),
                           ),
                           _buildTransactionCard(
-                            "Premium Wash - Kohli",
+                            "Premium Wash - #ORD-1089",
                             "Yesterday, 2:00 PM",
                             "₹2,000",
                             const Color(0xFF22C55E),
                           ),
                           _buildTransactionCard(
-                            "Basic Wash - Rohit",
+                            "Basic Wash - #ORD-1088",
                             "Feb 24, 11:00 AM",
                             "₹500",
                             const Color(0xFF22C55E),

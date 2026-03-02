@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/route_map_screen.dart';
+import 'package:wink_worker/screens/before_service_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
-  final String name;
+  final String orderId;
   final String address;
   final String time;
   final String distance;
@@ -10,7 +11,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
   const OrderDetailsScreen({
     super.key,
-    required this.name,
+    required this.orderId,
     required this.address,
     required this.time,
     required this.distance,
@@ -82,12 +83,12 @@ class OrderDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Order ID: #1",
+                          "Order ID",
                           style: TextStyle(color: Colors.white70, fontSize: 14),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          name,
+                          orderId,
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 28,
@@ -138,42 +139,20 @@ class OrderDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildActionButton(
-                                Icons.near_me,
-                                "Navigate",
-                                const Color(0xFF030D21),
-                                () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => RouteMapScreen(
-                                            destinationAddress: address,
-                                          ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildActionButton(
-                                Icons.phone,
-                                "Call Customer",
-                                const Color(0xFF22C55E),
-                                () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Calling Customer..."),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
+                        SizedBox(
+                          width: double.infinity,
+                          child: _buildActionButton(
+                            Icons.phone,
+                            "Call Customer",
+                            const Color(0xFF22C55E),
+                            () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Calling Customer..."),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -276,35 +255,72 @@ class OrderDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 32),
 
                   // Bottom Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    RouteMapScreen(destinationAddress: address),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => RouteMapScreen(
+                                        destinationAddress: address,
+                                      ),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF030D21),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Navigate",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF030D21),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Accept & Start",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: SizedBox(
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const BeforeServiceScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF22C55E),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              "Scan",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 32),
                 ],

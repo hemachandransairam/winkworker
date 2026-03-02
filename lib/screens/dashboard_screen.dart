@@ -253,7 +253,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                       // Order Card
                       _buildRefinedOrderCard(
-                        name: "Ramesh",
+                        orderId: "#ORD-1092",
                         address: "123 Main St, Downtown",
                         time: "10 : 30 AM",
                         date: "30-08",
@@ -304,7 +304,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildRefinedOrderCard({
-    required String name,
+    required String orderId,
     required String address,
     required String time,
     required String date,
@@ -331,7 +331,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                name,
+                orderId,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -411,7 +411,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   MaterialPageRoute(
                     builder:
                         (context) => OrderDetailsScreen(
-                          name: name,
+                          orderId: orderId,
                           address: address,
                           time: time,
                           distance: date,

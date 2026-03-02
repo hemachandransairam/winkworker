@@ -84,7 +84,7 @@ class _JobCompletedScreenState extends State<JobCompletedScreen> {
                       title: "Job Summary",
                       child: Column(
                         children: [
-                          _buildSummaryRow("Customer", "Ramesh"),
+                          _buildSummaryRow("Customer (Order ID)", "#ORD-1092"),
                           _buildSummaryRow("Service", "Premium Doorstep Wash"),
                           _buildSummaryRow("Duration", "45 mins"),
                           _buildSummaryRow("Vehicle Type", "Sedan"),
