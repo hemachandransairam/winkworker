@@ -18,7 +18,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       'image': 'assets/onboarding.jpg',
       'title': 'Start Your Service Day',
       'description':
-          'View assigned bookings and travel to customers’ locations to deliver professional car wash services efficiently and on time.',
+          'View assigned bookings and travel to customer’s locations to deliver professional car wash services efficiently and on time.',
     },
   ];
 
@@ -213,7 +213,10 @@ class OnboardingContent extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: Image.asset('assets/wynkash_logo.png', fit: BoxFit.contain),
+                      child: Image.asset(
+                        'assets/wynkash_logo.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
