@@ -15,38 +15,6 @@ class _AadharUploadScreenState extends State<AadharUploadScreen> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
-  void _showPickerOptions() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder:
-          (context) => SafeArea(
-            child: Wrap(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Take a Photo'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageWithSource(ImageSource.camera);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageWithSource(ImageSource.gallery);
-                  },
-                ),
-              ],
-            ),
-          ),
-    );
-  }
-
   Future<void> _pickImageWithSource(ImageSource source) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
@@ -125,7 +93,8 @@ class _AadharUploadScreenState extends State<AadharUploadScreen> {
                         ),
                         const SizedBox(height: 40),
                         GestureDetector(
-                          onTap: _showPickerOptions,
+                          onTap:
+                              () => _pickImageWithSource(ImageSource.gallery),
                           child: CustomPaint(
                             painter: DashedBorderPainter(
                               color:
