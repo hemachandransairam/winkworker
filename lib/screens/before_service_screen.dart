@@ -200,18 +200,21 @@ class _BeforeServiceScreenState extends State<BeforeServiceScreen> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => ChecklistScreen(
-                                      additionalServices:
-                                          widget.additionalServices,
-                                    ),
-                              ),
-                            );
-                          },
+                          onPressed:
+                              _capturedImages.isEmpty
+                                  ? null
+                                  : () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => ChecklistScreen(
+                                              additionalServices:
+                                                  widget.additionalServices,
+                                            ),
+                                      ),
+                                    );
+                                  },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF030D21),
                             disabledBackgroundColor: const Color(0xFFE5E7EB),
@@ -220,12 +223,15 @@ class _BeforeServiceScreenState extends State<BeforeServiceScreen> {
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
+                          child: Text(
                             "Proceed",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color:
+                                  _capturedImages.isEmpty
+                                      ? const Color(0xFF9CA3AF)
+                                      : Colors.white,
                             ),
                           ),
                         ),
