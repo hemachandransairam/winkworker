@@ -11,6 +11,15 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   bool isAvailable = true;
+  late final String loginTimeStr = () {
+    final now = DateTime.now();
+    final hour = now.hour % 12 == 0 ? 12 : now.hour % 12;
+    final ampm = now.hour >= 12 ? "PM" : "AM";
+    final min = now.minute.toString().padLeft(2, '0');
+    final day = now.day.toString().padLeft(2, '0');
+    final month = now.month.toString().padLeft(2, '0');
+    return "Logged in at $day-$month-${now.year}, $hour:$min $ampm";
+  }();
 
   @override
   Widget build(BuildContext context) {
@@ -206,9 +215,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  "Logged in at 9:00 AM",
-                                  style: TextStyle(
+                                Text(
+                                  loginTimeStr,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
