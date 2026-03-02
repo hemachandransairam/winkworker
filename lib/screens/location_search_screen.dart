@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wink_worker/screens/work_area_screen.dart';
+import 'package:wink_worker/screens/details_screen.dart';
+import 'package:wink_worker/screens/work_details_screen.dart';
 
 class LocationSearchScreen extends StatefulWidget {
   const LocationSearchScreen({super.key});
@@ -71,7 +72,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const WorkAreaScreen(),
+                    builder: (context) => const DetailsScreen(),
                   ),
                 );
               },
@@ -105,7 +106,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const WorkAreaScreen(),
+                    builder: (context) => const DetailsScreen(),
                   ),
                 );
               },

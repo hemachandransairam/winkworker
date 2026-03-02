@@ -1,3 +1,5 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/splach.dart';
 
@@ -12,8 +14,8 @@ void main() async {
   );
 
   runApp(
-    const MyApp(),
-    //DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    //const MyApp(),
+    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
   );
 }
 

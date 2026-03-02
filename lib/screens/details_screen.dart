@@ -73,7 +73,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       children: [
                         const SizedBox(height: 10),
                         const Text(
-                          "Complete Your Profile",
+                          " Profile",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 28,
