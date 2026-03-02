@@ -13,6 +13,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
   final _bankNameController = TextEditingController();
   final _holderNameController = TextEditingController();
   final _accountController = TextEditingController();
+  final _branchNameController = TextEditingController();
   final _ifscController = TextEditingController();
   bool _isFormValid = false;
 
@@ -22,6 +23,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
           _bankNameController.text.trim().isNotEmpty &&
           _holderNameController.text.trim().isNotEmpty &&
           _accountController.text.trim().isNotEmpty &&
+          _branchNameController.text.trim().isNotEmpty &&
           _ifscController.text.trim().isNotEmpty;
     });
   }
@@ -64,6 +66,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
     _bankNameController.dispose();
     _holderNameController.dispose();
     _accountController.dispose();
+    _branchNameController.dispose();
     _ifscController.dispose();
     super.dispose();
   }
@@ -221,6 +224,15 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                           ),
                           _buildHelperText("Number as per bank records"),
                           const SizedBox(height: 20),
+                          _buildLabel("Branch Name"),
+                          const SizedBox(height: 8),
+                          _buildTextField(
+                            _branchNameController,
+                            "Enter Branch Name",
+                            onChanged: (_) => _validateForm(),
+                          ),
+                          _buildHelperText("Branch name as per bank records"),
+                          const SizedBox(height: 20),
                           _buildLabel("IFSC Code"),
                           const SizedBox(height: 8),
                           _buildTextField(
@@ -247,6 +259,9 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                                                     .trim(),
                                             'account_number':
                                                 _accountController.text.trim(),
+                                            'branch_name':
+                                                _branchNameController.text
+                                                    .trim(),
                                             'ifsc_code':
                                                 _ifscController.text.trim(),
                                           });
