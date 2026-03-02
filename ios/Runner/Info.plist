@@ -49,5 +49,9 @@
 	<string>This app needs camera access to take photos for document verification.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs gallery access to upload document photos.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app needs speech recognition to capture spoken notes.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to capture spoken notes.</string>
 </dict>
 </plist>

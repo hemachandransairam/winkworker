@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/before_service_screen.dart';
 import 'package:wink_worker/screens/job_completed_screen.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class ServiceSummaryScreen extends StatefulWidget {
   final List<Map<String, dynamic>>? initialAdditionalServices;
@@ -12,11 +13,48 @@ class ServiceSummaryScreen extends StatefulWidget {
 
 class _ServiceSummaryScreenState extends State<ServiceSummaryScreen> {
   late List<Map<String, dynamic>> _additionalServices;
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  final TextEditingController _notesController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _additionalServices = List.from(widget.initialAdditionalServices ?? []);
+    _speech = stt.SpeechToText();
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) {
+          if (val == 'done' || val == 'notListening') {
+            setState(() => _isListening = false);
+          }
+        },
+        onError: (val) {
+          setState(() => _isListening = false);
+        },
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult:
+              (val) => setState(() {
+                _notesController.text = val.recognizedWords;
+              }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
   }
 
   final List<Map<String, dynamic>> _availableServices = [
@@ -395,17 +433,34 @@ class _ServiceSummaryScreenState extends State<ServiceSummaryScreen> {
                               color: const Color(0xFFF9FAFB),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const TextField(
+                            child: TextField(
+                              controller: _notesController,
                               maxLines: 3,
                               decoration: InputDecoration(
-                                hintText: "Add any notes or report issues...",
+                                hintText:
+                                    _isListening
+                                        ? "Listening..."
+                                        : "Tap the mic to dictate notes...",
                                 hintStyle: TextStyle(
-                                  color: Color(0xFF9CA3AF),
+                                  color:
+                                      _isListening
+                                          ? Colors.red
+                                          : const Color(0xFF9CA3AF),
                                   fontSize: 14,
                                 ),
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                   vertical: 16,
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isListening ? Icons.mic : Icons.mic_none,
+                                    color:
+                                        _isListening
+                                            ? Colors.red
+                                            : const Color(0xFF9CA3AF),
+                                  ),
+                                  onPressed: _listen,
                                 ),
                               ),
                             ),
