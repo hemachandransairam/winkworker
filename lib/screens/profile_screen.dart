@@ -1,4 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:wink_worker/services/supabase_service.dart';
+import 'package:wink_worker/screens/worker_profile_details_screen.dart';
+import 'package:wink_worker/screens/auth/phone_number_screen.dart';
+import 'package:wink_worker/screens/payment_details_screen.dart';
+import 'package:wink_worker/screens/work_details_screen.dart';
+import 'package:wink_worker/screens/leave_application_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,45 +15,94 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Map<String, dynamic>? _workerData;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile();
+  }
+
+  Future<void> _fetchProfile() async {
+    final phone = SupabaseService().currentUserPhone;
+    if (phone == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final data = await SupabaseService().getWorkerData(phone);
+    if (data != null) {
+      setState(() {
+        _workerData = data;
+        _isLoading = false;
+      });
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator(color: Colors.white)),
+        backgroundColor: Color(0xFF061633),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background Image (same as login page)
+          // Background Image
           Positioned.fill(
             child: Image.asset('assets/loginbg.png', fit: BoxFit.cover),
           ),
 
           SafeArea(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // App Bar
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Center(
-                      child: Text(
-                        "My Profile",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                  // App Bar (Custom layout style same as before)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.pop(context),
                         ),
-                      ),
+                        const Text(
+                          "My Profile",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 48), // Spacer to balance
+                      ],
                     ),
                   ),
 
                   const SizedBox(height: 12),
 
-                  // Profile Info Card
-                  _buildProfileCard(),
+                  // Profile Card with Stats
+                  _buildProfileHeaderCard(),
 
                   const SizedBox(height: 24),
 
-                  // White Content Section (same rounded top as Dashboard)
+                  // Content Section (White with rounded top)
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -59,43 +115,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
-
-                        // Achievements
-                        _buildAchievements(),
-
                         const SizedBox(height: 24),
 
-                        // Menu Items
-                        _buildMenuItem(
+                        // Achievements Section
+                        _buildAchievementsSection(),
+
+                        const SizedBox(height: 32),
+
+                        // Menu List
+                        _buildMenuTile(
                           icon: Icons.person_outline,
-                          iconColor: const Color(0xFF1E6AFB),
+                          color: const Color(0xFF1E6AFB),
                           title: "Personal Details",
                           subtitle: "Name, email, phone number",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        const WorkerProfileDetailsScreen(),
+                              ),
+                            );
+                          },
                         ),
-                        _buildMenuItem(
+                        _buildMenuTile(
                           icon: Icons.attach_money,
-                          iconColor: const Color(0xFF22C55E),
+                          color: const Color(0xFF22C55E),
                           title: "Payment Details",
                           subtitle: "Bank account, tax info",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const PaymentDetailsScreen(),
+                              ),
+                            );
+                          },
                         ),
-                        _buildMenuItem(
+                        _buildMenuTile(
                           icon: Icons.work_outline,
-                          iconColor: const Color(0xFFA855F7),
+                          color: const Color(0xFFA855F7),
                           title: "Work Details",
                           subtitle: "Schedule, service area",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const WorkDetailsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildMenuTile(
+                          icon: Icons.description_outlined,
+                          color: const Color(0xFFF97316),
+                          title: "Leave Application",
+                          subtitle: "Apply for leave, view history",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const LeaveApplicationScreen(),
+                              ),
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 24),
-
-                        // This Month's Performance
-                        _buildPerformance(),
-
-                        const SizedBox(height: 24),
-
-                        // Action Buttons
-                        _buildActionButtons(),
-
+                        _buildMenuTile(
+                          icon: Icons.logout,
+                          color: const Color(0xFFEF4444),
+                          title: "Logout",
+                          subtitle: "Sign out of your account",
+                          onTap: () async {
+                            await SupabaseService().logout();
+                            if (mounted) {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const PhoneNumberScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            }
+                          },
+                        ),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -109,64 +216,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ─── Profile Card ────────────────────────────────────────────────
-  Widget _buildProfileCard() {
+  Widget _buildProfileHeaderCard() {
+    final photoUrl = _workerData?['profile_photo_url'];
+    final name = _workerData?['full_name'] ?? 'Worker';
+    final createdAt = _workerData?['created_at'];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0x14FFFFFF),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0x1AFFFFFF)),
+          color: Colors.white.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
         child: Column(
           children: [
             Row(
               children: [
                 Container(
-                  width: 64,
-                  height: 64,
+                  width: 70,
+                  height: 70,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE0E7FF),
+                    color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0x33FFFFFF),
-                      width: 2,
-                    ),
+                    image:
+                        photoUrl != null
+                            ? DecorationImage(
+                              image:
+                                  photoUrl.startsWith('http')
+                                      ? NetworkImage(photoUrl) as ImageProvider
+                                      : FileImage(File(photoUrl)),
+                              fit: BoxFit.cover,
+                            )
+                            : null,
                   ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Color(0xFF94A3B8),
-                    size: 36,
-                  ),
+                  child:
+                      photoUrl == null
+                          ? const Icon(
+                            Icons.person_outline,
+                            color: Color(0xFF1E6AFB),
+                            size: 40,
+                          )
+                          : null,
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "David Martinez",
-                        style: TextStyle(
-                          fontSize: 20,
+                        name,
+                        style: const TextStyle(
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
+                      const Text(
                         "Employee ID: EMP-2024",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xB3FFFFFF),
-                        ),
+                        style: TextStyle(fontSize: 14, color: Colors.white70),
                       ),
                       Text(
-                        "Member since Jan 2024",
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xB3FFFFFF),
+                        _formatDate(createdAt),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -174,283 +289,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            // Stats Row
-            Row(
-              children: [
-                _buildProfileStat("156", "Jobs Done"),
-                const SizedBox(width: 12),
-                _buildProfileStat("4.8", "Rating"),
-                const SizedBox(width: 12),
-                _buildProfileStat("98%", "Success"),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileStat(String value, String label) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: const Color(0x1AFFFFFF),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 11, color: Color(0xB3FFFFFF)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ─── Achievements ────────────────────────────────────────────────
-  Widget _buildAchievements() {
-    final achievements = [
-      {
-        'icon': Icons.star_outline,
-        'label': 'Top Rated',
-        'color': const Color(0xFFEF4444),
-      },
-      {
-        'icon': Icons.access_time,
-        'label': 'On Time',
-        'color': const Color(0xFF1E6AFB),
-      },
-      {
-        'icon': Icons.workspace_premium,
-        'label': '100 Jobs',
-        'color': const Color(0xFF22C55E),
-      },
-      {
-        'icon': Icons.explore_outlined,
-        'label': 'Explorer',
-        'color': const Color(0xFFA855F7),
-      },
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(
-                  Icons.emoji_events_outlined,
-                  color: Color(0xFF1E6AFB),
-                  size: 22,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  "Achievements",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children:
-                  achievements.map((a) {
-                    Color color = a['color'] as Color;
-                    return Column(
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: color, width: 2.5),
-                          ),
-                          child: Icon(
-                            a['icon'] as IconData,
-                            color: color,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          a['label'] as String,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF6B7280),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ─── Menu Items ──────────────────────────────────────────────────
-  Widget _buildMenuItem({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: iconColor.withAlpha(25),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: iconColor, size: 22),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F2937),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF94A3B8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.chevron_right, color: Color(0xFF94A3B8), size: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ─── Performance ─────────────────────────────────────────────────
-  Widget _buildPerformance() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F5F9)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "This Month's Performance",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Jobs Completed
-            _buildProgressRow(
-              label: "Jobs Completed",
-              value: "32/40",
-              progress: 0.8,
-              color: const Color(0xFF1E6AFB),
-            ),
-            const SizedBox(height: 16),
-
-            // Customer Rating
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Customer Rating",
-                  style: TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
-                ),
-                Row(
-                  children: [
-                    const Text(
-                      "4.8",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1F2937),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(Icons.star, color: Colors.amber.shade600, size: 18),
-                  ],
-                ),
+                _buildStatBox("156", "Jobs Done"),
+                _buildStatBox("4.8", "Rating"),
+                _buildStatBox("98%", "Success"),
               ],
-            ),
-            const SizedBox(height: 6),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: LinearProgressIndicator(
-                value: 0.96,
-                minHeight: 8,
-                backgroundColor: const Color(0xFFF1F5F9),
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.amber.shade600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // On-Time Rate
-            _buildProgressRow(
-              label: "On-Time Rate",
-              value: "95%",
-              progress: 0.95,
-              color: const Color(0xFF22C55E),
             ),
           ],
         ),
@@ -458,102 +304,180 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProgressRow({
-    required String label,
-    required String value,
-    required double progress,
-    required Color color,
-  }) {
+  Widget _buildStatBox(String value, String label) {
+    return Container(
+      width: (MediaQuery.of(context).size.width - 88) / 3,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAchievementsSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
-            ),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            children: [
+              Icon(Icons.military_tech_outlined, color: Color(0xFF1E6AFB)),
+              SizedBox(width: 8),
+              Text(
+                "Achievements",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 8,
-            backgroundColor: const Color(0xFFF1F5F9),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
+        const SizedBox(height: 20),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              _buildAchievementChip(
+                Icons.emoji_events_outlined,
+                "Top Rated",
+                const Color(0xFFFACC15),
+              ),
+              _buildAchievementChip(
+                Icons.access_time,
+                "On Time",
+                const Color(0xFF1E6AFB),
+              ),
+              _buildAchievementChip(
+                Icons.workspace_premium_outlined,
+                "100 Jobs",
+                const Color(0xFF4ADE80),
+              ),
+              _buildAchievementChip(
+                Icons.explore_outlined,
+                "Explorer",
+                const Color(0xFFA855F7),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  // ─── Action Buttons ──────────────────────────────────────────────
-  Widget _buildActionButtons() {
+  Widget _buildAchievementChip(IconData icon, String label, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFF1F5F9)),
-              ),
-              child: const Column(
-                children: [
-                  Icon(Icons.attach_money, color: Color(0xFF1E6AFB), size: 32),
-                  SizedBox(height: 8),
-                  Text(
-                    "View Earnings",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1F2937),
-                    ),
-                  ),
-                ],
-              ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
+            child: Icon(icon, color: color, size: 28),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFF1F5F9)),
-              ),
-              child: const Column(
-                children: [
-                  Icon(Icons.history, color: Color(0xFF1E6AFB), size: 32),
-                  SizedBox(height: 8),
-                  Text(
-                    "Work History",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1F2937),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildMenuTile({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Icon(icon, color: color),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Color(0xFFCBD5E1),
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return "Member since 2024";
+    try {
+      final date = DateTime.parse(dateStr);
+      List<String> months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      return "Member since ${months[date.month - 1]} ${date.year}";
+    } catch (e) {
+      return "Member since 2024";
+    }
   }
 }

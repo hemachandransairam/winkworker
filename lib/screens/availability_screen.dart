@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/service_preference_screen.dart';
+import 'package:wink_worker/services/supabase_service.dart';
 
 class AvailabilityScreen extends StatefulWidget {
   final Set<String> selectedAreas;
@@ -46,74 +47,95 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
           ),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                const Text(
-                  "Availability Preferences",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Choose your work availability",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const SizedBox(height: 48),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 40),
+                        const Text(
+                          "Availability Preferences",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "Choose your work availability",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 48),
 
-                ..._options.map((opt) => _buildOptionCard(opt)).toList(),
+                        ..._options
+                            .map((opt) => _buildOptionCard(opt))
+                            .toList(),
 
-                const SizedBox(height: 48),
+                        const Spacer(),
+                        const SizedBox(height: 48),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _selectedAvailability != null
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ServicePreferenceScreen(
-                                  isPartTime:
-                                      _selectedAvailability == 'Part Time',
-                                  selectedAreas: widget.selectedAreas,
-                                ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed:
+                                _selectedAvailability == null
+                                    ? null
+                                    : () {
+                                      SupabaseService().updateData({
+                                        'availability': _selectedAvailability,
+                                      });
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  ServicePreferenceScreen(
+                                                    isPartTime:
+                                                        _selectedAvailability ==
+                                                        'Part Time',
+                                                    selectedAreas:
+                                                        widget.selectedAreas,
+                                                  ),
+                                        ),
+                                      );
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF000D26),
+                              disabledBackgroundColor: const Color(0xFFE5E7EB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF000D26),
-                      disabledBackgroundColor: const Color(0xFFE5E7EB),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -132,9 +154,8 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF3B82F6)
-                : const Color(0xFFF3F4F6),
+            color:
+                isSelected ? const Color(0xFF3B82F6) : const Color(0xFFF3F4F6),
             width: 1.5,
           ),
           boxShadow: [
@@ -151,9 +172,10 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFFF3F4F6),
+                color:
+                    isSelected
+                        ? const Color(0xFF3B82F6)
+                        : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -186,24 +208,26 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? const Color(0xFF3B82F6)
-                      : const Color(0xFFE5E7EB),
+                  color:
+                      isSelected
+                          ? const Color(0xFF3B82F6)
+                          : const Color(0xFFE5E7EB),
                   width: 2,
                 ),
               ),
-              child: isSelected
-                  ? Center(
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF3B82F6),
-                          shape: BoxShape.circle,
+              child:
+                  isSelected
+                      ? Center(
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF3B82F6),
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                    )
-                  : null,
+                      )
+                      : null,
             ),
           ],
         ),

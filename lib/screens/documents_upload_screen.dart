@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wink_worker/screens/aadhar_upload_screen.dart';
+import 'package:wink_worker/screens/selfie_upload_screen.dart';
+import 'package:wink_worker/screens/license_upload_screen.dart';
 
 class DocumentsUploadScreen extends StatefulWidget {
   const DocumentsUploadScreen({super.key});
@@ -9,7 +12,7 @@ class DocumentsUploadScreen extends StatefulWidget {
 
 class _DocumentsUploadScreenState extends State<DocumentsUploadScreen> {
   final Map<String, bool> _documents = {
-    'ID Proof (Aadhar/PAN)': false,
+    'ID Proof': false,
     'Driving License': false,
     'Selfie for Verification': false,
   };
@@ -65,11 +68,12 @@ class _DocumentsUploadScreenState extends State<DocumentsUploadScreen> {
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: _isAllUploaded
-                        ? () {
-                            Navigator.pop(context, true);
-                          }
-                        : null,
+                    onPressed:
+                        _isAllUploaded
+                            ? () {
+                              Navigator.pop(context, true);
+                            }
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF000D26),
                       disabledBackgroundColor: const Color(0xFFE5E7EB),
@@ -98,12 +102,30 @@ class _DocumentsUploadScreenState extends State<DocumentsUploadScreen> {
   }
 
   Widget _buildDocCard(String title) {
-    bool isUploaded = _documents[title]!;
+    bool isUploaded = _documents[title] ?? false;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _documents[title] = true;
-        });
+      onTap: () async {
+        Widget? nextScreen;
+        if (title == 'ID Proof') {
+          nextScreen = const AadharUploadScreen();
+        } else if (title == 'Driving License') {
+          nextScreen = const LicenseUploadScreen();
+        } else if (title == 'Selfie for Verification') {
+          nextScreen = const SelfieUploadScreen();
+        }
+
+        if (nextScreen != null) {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => nextScreen!),
+          );
+
+          if (result == true) {
+            setState(() {
+              _documents[title] = true;
+            });
+          }
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -112,9 +134,8 @@ class _DocumentsUploadScreenState extends State<DocumentsUploadScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isUploaded
-                ? const Color(0xFF10B981)
-                : const Color(0xFFF3F4F6),
+            color:
+                isUploaded ? const Color(0xFF10B981) : const Color(0xFFF3F4F6),
             width: 1.5,
           ),
         ),
@@ -131,9 +152,10 @@ class _DocumentsUploadScreenState extends State<DocumentsUploadScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isUploaded
-                      ? const Color(0xFF10B981)
-                      : const Color(0xFF1F2937),
+                  color:
+                      isUploaded
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFF1F2937),
                 ),
               ),
             ),

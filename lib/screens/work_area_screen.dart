@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/availability_screen.dart';
+import 'package:wink_worker/services/supabase_service.dart';
 
 class WorkAreaScreen extends StatefulWidget {
   const WorkAreaScreen({super.key});
@@ -21,68 +22,87 @@ class _WorkAreaScreenState extends State<WorkAreaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Select Your Work Area",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "We need a few more details to get you started",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const SizedBox(height: 48),
-                ..._options.map((option) => _buildOptionCard(option)).toList(),
-                const SizedBox(height: 48),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _selectedAreas.isEmpty
-                        ? null
-                        : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AvailabilityScreen(
-                                  selectedAreas: _selectedAreas,
-                                ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 48),
+                        const Text(
+                          "Select Your Work Area",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          "We need a few more details to get you started",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 48),
+                        ..._options
+                            .map((option) => _buildOptionCard(option))
+                            .toList(),
+                        const Spacer(),
+                        const SizedBox(height: 48),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed:
+                                _selectedAreas.isEmpty
+                                    ? null
+                                    : () {
+                                      SupabaseService().updateData({
+                                        'work_areas': _selectedAreas.toList(),
+                                      });
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => AvailabilityScreen(
+                                                selectedAreas: _selectedAreas,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF000D26),
+                              disabledBackgroundColor: const Color(0xFFE5E7EB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                            );
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF000D26),
-                      disabledBackgroundColor: const Color(0xFFE5E7EB),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -109,9 +129,8 @@ class _WorkAreaScreenState extends State<WorkAreaScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF3B82F6)
-                : const Color(0xFFF3F4F6),
+            color:
+                isSelected ? const Color(0xFF3B82F6) : const Color(0xFFF3F4F6),
             width: 1.5,
           ),
           boxShadow: [
@@ -128,9 +147,10 @@ class _WorkAreaScreenState extends State<WorkAreaScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF3B82F6)
-                    : const Color(0xFFF3F4F6),
+                color:
+                    isSelected
+                        ? const Color(0xFF3B82F6)
+                        : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -154,24 +174,26 @@ class _WorkAreaScreenState extends State<WorkAreaScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? const Color(0xFF3B82F6)
-                      : const Color(0xFFE5E7EB),
+                  color:
+                      isSelected
+                          ? const Color(0xFF3B82F6)
+                          : const Color(0xFFE5E7EB),
                   width: 2,
                 ),
               ),
-              child: isSelected
-                  ? Center(
-                      child: Container(
-                        width: 12,
-                        height: 12,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF3B82F6),
-                          shape: BoxShape.circle,
+              child:
+                  isSelected
+                      ? Center(
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF3B82F6),
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                    )
-                  : null,
+                      )
+                      : null,
             ),
           ],
         ),

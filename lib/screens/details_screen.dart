@@ -60,79 +60,99 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
-                const Text(
-                  "Complete Your Profile",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "We need a few more details to get you started",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Color(0xFF6B7280)),
-                ),
-                const SizedBox(height: 40),
-                for (int index = 0; index < _sections.length; index++) ...[
-                  _buildSectionCard(
-                    _sections[index],
-                    _completedSections.contains(_sections[index]['title']),
-                    index > 0 &&
-                        !_completedSections.contains(
-                          _sections[index - 1]['title'],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Complete Your Profile",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1F2937),
+                            height: 1.2,
+                          ),
                         ),
-                  ),
-                ],
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed:
-                        isAllFinished
-                            ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const ReviewSubmitScreen(),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "We need a few more details to get you started",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        for (
+                          int index = 0;
+                          index < _sections.length;
+                          index++
+                        ) ...[
+                          _buildSectionCard(
+                            _sections[index],
+                            _completedSections.contains(
+                              _sections[index]['title'],
+                            ),
+                            index > 0 &&
+                                !_completedSections.contains(
+                                  _sections[index - 1]['title'],
                                 ),
-                              );
-                            }
-                            : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF000D26),
-                      disabledBackgroundColor: const Color(0xFFE5E7EB),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                          ),
+                        ],
+                        const Spacer(),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 60,
+                          child: ElevatedButton(
+                            onPressed:
+                                isAllFinished
+                                    ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  const ReviewSubmitScreen(),
+                                        ),
+                                      );
+                                    }
+                                    : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF000D26),
+                              disabledBackgroundColor: const Color(0xFFE5E7EB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 40),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

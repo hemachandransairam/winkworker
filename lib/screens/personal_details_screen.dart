@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/profile_photo_screen.dart';
+import 'package:wink_worker/services/supabase_service.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
   const PersonalDetailsScreen({super.key});
@@ -10,6 +11,12 @@ class PersonalDetailsScreen extends StatefulWidget {
 
 class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = SupabaseService().signupData['full_name'] ?? '';
+  }
 
   @override
   void dispose() {
@@ -122,21 +129,27 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: _nameController.text.trim().isNotEmpty
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const ProfilePhotoScreen(),
-                              ),
-                            ).then((result) {
-                              if (result == true) {
-                                Navigator.pop(context, true);
-                              }
-                            });
-                          }
-                        : null,
+                    onPressed:
+                        _nameController.text.trim().isNotEmpty
+                            ? () {
+                              // Save the data to SupabaseService
+                              SupabaseService().updateData({
+                                'full_name': _nameController.text.trim(),
+                              });
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const ProfilePhotoScreen(),
+                                ),
+                              ).then((result) {
+                                if (result == true) {
+                                  Navigator.pop(context, true);
+                                }
+                              });
+                            }
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF000D26),
                       disabledBackgroundColor: const Color(0xFFE5E7EB),

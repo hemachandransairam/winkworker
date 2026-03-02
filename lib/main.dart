@@ -1,23 +1,29 @@
-import 'package:flutter/foundation.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/splach.dart';
 
-void main() {
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://pmjohqngmfmkicpdipjz.supabase.co',
+    anonKey: 'sb_publishable_0m9stBaAI1Rj8XpWzVnDyA_Neb6DHhU',
+  );
+
   runApp(
-    //const MyApp(),
-    DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
+    const MyApp(),
+    //DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp()),
   );
 }
 
+//otp = 9412
+//hemachandranoff@gmail.com (supabase)
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      useInheritedMediaQuery: true,
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -25,6 +31,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const SplashScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

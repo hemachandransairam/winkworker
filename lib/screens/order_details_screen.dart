@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wink_worker/screens/route_map_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String name;
@@ -19,39 +20,28 @@ class OrderDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
+      backgroundColor: const Color(0xFFF8FAFC),
+      body: Column(
         children: [
-          // Background Image (same as home page)
-          Positioned.fill(
-            child: Image.asset('assets/loginbg.png', fit: BoxFit.cover),
-          ),
-
-          Column(
-            children: [
-              // Blue App Bar
-              Container(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top + 8,
-                  left: 8,
-                  right: 16,
-                  bottom: 16,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF1565C0), Color(0xFF1E88E5)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
+          // Top Navy Header with pattern
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color(0xFF030D21),
+              image: DecorationImage(
+                image: AssetImage('assets/loginbg.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 8),
@@ -59,481 +49,330 @@ class OrderDetailsScreen extends StatelessWidget {
                       "Order Details",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               ),
+            ),
+          ),
 
-              // Scrollable Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Customer Info Card (Blue)
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF1565C0), Color(0xFF42A5F5)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF1565C0).withAlpha(76),
-                                blurRadius: 15,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Order ID: #1",
-                                style: TextStyle(
-                                  color: Colors.white.withAlpha(204),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  _buildTag(
-                                    "New Order",
-                                    const Color(0xFF22C55E),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  _buildTag(
-                                    "Premium Wash",
-                                    const Color(0xFF1E88E5),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+
+                  // Customer Header Card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF030D21), Color(0xFF0F1E35)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-
-                      // White Content Area
-                      Container(
-                        width: double.infinity,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Order ID: #1",
+                          style: TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Location Details Section
-                              _buildSectionHeader(
-                                Icons.location_on_outlined,
-                                "Location Details",
-                              ),
-                              const SizedBox(height: 12),
-                              _buildLocationCard(),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildActionButton(
-                                      Icons.navigation_outlined,
-                                      "Navigate",
-                                      const Color(0xFF1565C0),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildActionButton(
-                                      Icons.phone,
-                                      "Call Customer",
-                                      const Color(0xFF22C55E),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 24),
-                              const Divider(color: Color(0xFFE2E8F0)),
-                              const SizedBox(height: 16),
-
-                              // Vehicle & Service Section
-                              _buildSectionHeader(
-                                Icons.directions_car_outlined,
-                                "Vehicle & Service",
-                              ),
-                              const SizedBox(height: 16),
-                              _buildInfoRow("Vehicle Type", "Sedan"),
-                              _buildInfoRow(
-                                "Make & Model",
-                                "Honda Accord 2022",
-                                isBold: true,
-                              ),
-                              _buildInfoRow(
-                                "Color",
-                                "Silver",
-                                valueColor: const Color(0xFF6B7280),
-                              ),
-                              _buildInfoRow(
-                                "License Plate",
-                                "ABC-1234",
-                                isBold: true,
-                              ),
-                              _buildInfoRow(
-                                "Service Type",
-                                "Premium Wash",
-                                valueColor: const Color(0xFF22C55E),
-                              ),
-
-                              const SizedBox(height: 16),
-                              const Divider(color: Color(0xFFE2E8F0)),
-                              const SizedBox(height: 16),
-
-                              // Service Includes Section
-                              _buildSectionHeader(
-                                Icons.checklist_outlined,
-                                "Service Includes",
-                              ),
-                              const SizedBox(height: 12),
-                              _buildServiceItem("Exterior Hand Wash"),
-                              _buildServiceItem("Interior Vacuuming"),
-                              _buildServiceItem("Tire Shine"),
-                              _buildServiceItem("Window Cleaning"),
-                              _buildServiceItem("Dashboard Polish"),
-
-                              const SizedBox(height: 16),
-                              const Divider(color: Color(0xFFE2E8F0)),
-                              const SizedBox(height: 16),
-
-                              // Timing & Payment Section
-                              _buildSectionHeader(
-                                Icons.access_time,
-                                "Timing & Payment",
-                              ),
-                              const SizedBox(height: 16),
-                              _buildInfoRow(
-                                "Scheduled Time",
-                                time,
-                                isBold: true,
-                              ),
-                              _buildInfoRow("Expected Duration", "45 minutes"),
-                              _buildInfoRow("Distance", distance),
-                              _buildInfoRow(
-                                "Payment Method",
-                                "Online Paid",
-                                valueColor: const Color(0xFF22C55E),
-                              ),
-
-                              const SizedBox(height: 16),
-
-                              // Total Amount Card
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF0FDF4),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: const Color(0xFFBBF7D0),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.currency_rupee,
-                                      color: Color(0xFF16A34A),
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Text(
-                                      "Total Amount",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF1F2937),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Text(
-                                      price,
-                                      style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF16A34A),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              const SizedBox(height: 24),
-                              const Divider(color: Color(0xFFE2E8F0)),
-                              const SizedBox(height: 16),
-
-                              // Special Instructions Section
-                              const Text(
-                                "Special Instructions",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFBEB),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: const Color(0xFFFDE68A),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Please be careful with the sunroof. Park in the driveway, not on the street. Keys will be left under the mat.",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF92400E),
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 32),
-
-                              // Action Buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 52,
-                                      child: ElevatedButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFFEF4444,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          elevation: 0,
-                                        ),
-                                        child: const Text(
-                                          "Decline",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: SizedBox(
-                                      height: 52,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                "Order Accepted! Starting service...",
-                                              ),
-                                              backgroundColor: Color(
-                                                0xFF22C55E,
-                                              ),
-                                            ),
-                                          );
-                                          Navigator.pop(context);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFF22C55E,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                          elevation: 0,
-                                        ),
-                                        child: const Text(
-                                          "Accept & Start",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 24),
-                            ],
-                          ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            _buildNavyTag("New Order"),
+                            const SizedBox(width: 10),
+                            _buildNavyTag("Premium Wash"),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 16),
+
+                  // Location Details
+                  _buildDetailCard(
+                    title: "Location Details",
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Customer Address",
+                          style: TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          address,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                        const Text(
+                          "Apartment 4B, Near Central Park",
+                          style: TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildActionButton(
+                                Icons.near_me,
+                                "Navigate",
+                                const Color(0xFF030D21),
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => RouteMapScreen(
+                                            destinationAddress: address,
+                                          ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildActionButton(
+                                Icons.phone,
+                                "Call Customer",
+                                const Color(0xFF22C55E),
+                                () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Calling Customer..."),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Vehicle & Service
+                  _buildDetailCard(
+                    title: "Vehicle & Service",
+                    child: Column(
+                      children: [
+                        _buildInfoRow("Vehicle Type", "Sedan"),
+                        _buildInfoRow("Car Model", "Hyundai"),
+                        _buildInfoRow(
+                          "Service Type",
+                          "Premium Doorstep Wash",
+                          valueColor: const Color(0xFF3B82F6),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Service Includes
+                  _buildDetailCard(
+                    title: "Service Includes",
+                    child: Column(
+                      children: [
+                        _buildCheckItem("Outside Foam Wash"),
+                        _buildCheckItem("Interior Mat Cleaning"),
+                        _buildCheckItem("Tyre Polishing"),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Timing & Payment
+                  _buildDetailCard(
+                    title: "Timing & Payment",
+                    child: Column(
+                      children: [
+                        _buildInfoRow("Scheduled Time", "10:30 AM"),
+                        _buildInfoRow("Expected Duration", "45 mins"),
+                        _buildInfoRow("Distance", "2.5 km"),
+                        _buildInfoRow("Payment Method", "ABC-1312"),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE0EFFF),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Total Amount",
+                                style: TextStyle(
+                                  color: Color(0xFF1E40AF),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                price,
+                                style: const TextStyle(
+                                  color: Color(0xFF1E40AF),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Special Instructions
+                  _buildDetailCard(
+                    title: "Special Instructions",
+                    child: const Text(
+                      "Please be careful with the sunroof. Park in the driveway, not on the street. Keys will be left under the mat.",
+                      style: TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 13,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Bottom Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    RouteMapScreen(destinationAddress: address),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF030D21),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Accept & Start",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTag(String text, Color color) {
+  Widget _buildNavyTag(String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
+        color: const Color(0xFFFFFFFF).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
     );
   }
 
-  Widget _buildSectionHeader(IconData icon, String title) {
-    return Row(
-      children: [
-        Icon(icon, color: const Color(0xFF1F2937), size: 22),
-        const SizedBox(width: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1F2937),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLocationCard() {
+  Widget _buildDetailCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFF1F5F9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Customer Address",
-            style: TextStyle(
-              fontSize: 12,
-              color: const Color(0xFF6B7280),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            address,
+            title,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            "Apartment 4B, Near Central Park",
-            style: TextStyle(fontSize: 13, color: const Color(0xFF9CA3AF)),
-          ),
+          const SizedBox(height: 16),
+          child,
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color) {
-    return ElevatedButton.icon(
-      onPressed: () {},
-      icon: Icon(icon, color: Colors.white, size: 18),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 0,
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(
-    String label,
-    String value, {
-    bool isBold = false,
-    Color? valueColor,
-  }) {
+  Widget _buildInfoRow(String label, String value, {Color? valueColor}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
               color: valueColor ?? const Color(0xFF1F2937),
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ],
@@ -541,26 +380,63 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildServiceItem(String text) {
+  Widget _buildCheckItem(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: const Color(0xFF22C55E),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Icon(Icons.check, color: Colors.white, size: 14),
+          const Icon(
+            Icons.check_circle_outline,
+            color: Color(0xFF22C55E),
+            size: 18,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Text(
             text,
-            style: const TextStyle(fontSize: 14, color: Color(0xFF374151)),
+            style: const TextStyle(color: Color(0xFF64748B), fontSize: 14),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    IconData icon,
+    String label,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return SizedBox(
+      height: 48,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.visible,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wink_worker/screens/dashboard_screen.dart';
-import 'package:wink_worker/screens/calendar_screen.dart';
 import 'package:wink_worker/screens/earnings_screen.dart';
 import 'package:wink_worker/screens/profile_screen.dart';
+import 'package:wink_worker/screens/history_screen.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   final int initialIndex;
@@ -22,11 +22,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     _selectedIndex = widget.initialIndex;
   }
 
-  final List<Widget> _pages = const [
-    DashboardScreen(),
-    CalendarScreen(),
-    EarningsScreen(),
-    ProfileScreen(),
+  final List<Widget> _pages = [
+    const DashboardScreen(),
+    const EarningsScreen(),
+    const HistoryScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -39,24 +39,46 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   Widget _buildBottomNav() {
     return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x0D000000),
-            blurRadius: 10,
-            offset: Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      height: 100, // accommodate lifted icon
+      decoration: const BoxDecoration(color: Colors.transparent),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.bottomCenter,
         children: [
-          _buildNavItem(0, Icons.directions_car, "Orders"),
-          _buildNavItem(1, Icons.calendar_today_outlined, "Calendar"),
-          _buildNavItem(2, Icons.currency_rupee, "Earnings"),
-          _buildNavItem(3, Icons.person_outline, "Profile"),
+          // The "half white block" with no round corners
+          Container(
+            height: 90,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+          ),
+          // Navigation Items
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 100,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _buildNavItem(0, Icons.electric_scooter, "Orders"),
+                  _buildNavItem(1, Icons.currency_rupee, "Earnings"),
+                  _buildNavItem(2, Icons.history, "History"),
+                  _buildNavItem(3, Icons.person_outline, "Profile"),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -68,34 +90,50 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       onTap: () {
         setState(() => _selectedIndex = index);
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: isSelected ? const Color(0xFF010A1A) : Colors.transparent,
-              shape: BoxShape.circle,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Lifted Circle
+            Transform.translate(
+              offset: Offset(0, isSelected ? -10 : 0),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color:
+                      isSelected ? const Color(0xFF030D21) : Colors.transparent,
+                  shape: BoxShape.circle,
+                  boxShadow:
+                      isSelected
+                          ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.12),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                          : [],
+                ),
+                child: Icon(
+                  icon,
+                  color: isSelected ? Colors.white : const Color(0xFF64748B),
+                  size: 26,
+                ),
+              ),
             ),
-            child: Icon(
-              icon,
-              color: isSelected ? Colors.white : const Color(0xFF94A3B8),
-              size: 24,
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: const Color(0xFF64748B),
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color:
-                  isSelected
-                      ? const Color(0xFF010A1A)
-                      : const Color(0xFF94A3B8),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
