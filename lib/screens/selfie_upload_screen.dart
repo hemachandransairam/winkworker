@@ -15,38 +15,6 @@ class _SelfieUploadScreenState extends State<SelfieUploadScreen> {
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
 
-  void _showPickerOptions() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder:
-          (context) => SafeArea(
-            child: Wrap(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Take a Photo'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageWithSource(ImageSource.camera);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Choose from Gallery'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImageWithSource(ImageSource.gallery);
-                  },
-                ),
-              ],
-            ),
-          ),
-    );
-  }
-
   Future<void> _pickImageWithSource(ImageSource source) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(
@@ -118,7 +86,7 @@ class _SelfieUploadScreenState extends State<SelfieUploadScreen> {
                 ),
                 const SizedBox(height: 60),
                 GestureDetector(
-                  onTap: _showPickerOptions,
+                  onTap: () => _pickImageWithSource(ImageSource.camera),
                   child: CustomPaint(
                     painter: DashedCirclePainter(
                       color:
