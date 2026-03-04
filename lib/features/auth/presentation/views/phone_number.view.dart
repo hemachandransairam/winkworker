@@ -164,7 +164,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                     ),
                     const SizedBox(height: 48),
                     // Logo at bottom
-                    Image.asset('assets/wynkwash_logo_white.png', height: 100),
+                    Image.asset('assets/wynkash_logo.png', height: 100),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -176,4 +176,3 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
     );
   }
 }
-

@@ -17,10 +17,7 @@ class BeginServiceScreen extends StatelessWidget {
               // Logo at top left
               Align(
                 alignment: Alignment.topLeft,
-                child: Image.asset(
-                  'assets/wynkwash_logo_white.png',
-                  height: 60,
-                ),
+                child: Image.asset('assets/wynkash_logo.png', height: 60),
               ),
               const SizedBox(height: 20),
               // Main Illustration
@@ -88,5 +85,3 @@ class BeginServiceScreen extends StatelessWidget {
     );
   }
 }
-
-
