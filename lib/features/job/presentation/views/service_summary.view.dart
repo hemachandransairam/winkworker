@@ -124,24 +124,35 @@ class _ServiceSummaryScreenState extends State<ServiceSummaryScreen> {
                         isExpanded: true,
                         hint: const Text("Choose a service"),
                         items:
-                            _availableServices.map((service) {
-                              return DropdownMenuItem<Map<String, dynamic>>(
-                                value: service,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(service['name']),
-                                    Text(
-                                      "₹${service['price']}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
+                            _availableServices
+                                .where(
+                                  (service) =>
+                                      !_additionalServices.any(
+                                        (s) => s['name'] == service['name'],
+                                      ) &&
+                                      !selectedInSheet.any(
+                                        (s) => s['name'] == service['name'],
                                       ),
+                                )
+                                .map((service) {
+                                  return DropdownMenuItem<Map<String, dynamic>>(
+                                    value: service,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(service['name']),
+                                        Text(
+                                          "₹${service['price']}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
+                                  );
+                                })
+                                .toList(),
                         onChanged: (val) {
                           if (val != null && !selectedInSheet.contains(val)) {
                             setSheetState(() {
@@ -577,4 +588,3 @@ class _ServiceSummaryScreenState extends State<ServiceSummaryScreen> {
     );
   }
 }
-
