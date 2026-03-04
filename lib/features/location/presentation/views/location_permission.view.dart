@@ -33,7 +33,7 @@ class LocationPermissionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 48),
               const Text(
-                'Provide your convenient\nwork area',
+                'Provide your current location',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,
@@ -44,7 +44,7 @@ class LocationPermissionScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                'To take services at your desired areas',
+                'To provide you the nearest hub',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
@@ -84,5 +84,3 @@ class LocationPermissionScreen extends StatelessWidget {
     );
   }
 }
-
-
