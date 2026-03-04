@@ -60,14 +60,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            IconButton(
-                              icon: const Icon(
-                                Icons.menu,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                              onPressed: () {},
-                            ),
+                            const SizedBox(
+                              width: 44,
+                            ), // Placeholder to keep the title centered
                             const Text(
                               "Dashboard",
                               style: TextStyle(
