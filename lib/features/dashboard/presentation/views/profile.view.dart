@@ -190,17 +190,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: const Color(0xFFEF4444),
                           title: "Logout",
                           subtitle: "Sign out of your account",
-                          onTap: () async {
-                            await SupabaseService().logout();
-                            if (mounted) {
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const PhoneNumberScreen(),
-                                ),
-                                (route) => false,
-                              );
-                            }
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext dialogContext) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFFEE2E2),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.logout,
+                                            color: Color(0xFFEF4444),
+                                            size: 32,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        const Text(
+                                          "Logout",
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF1F2937),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        const Text(
+                                          "Are you sure you want to log out of your account?",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xFF6B7280),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 28),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                onPressed:
+                                                    () => Navigator.pop(
+                                                      dialogContext,
+                                                    ),
+                                                style: OutlinedButton.styleFrom(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 14,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  side: const BorderSide(
+                                                    color: Color(0xFFE5E7EB),
+                                                  ),
+                                                ),
+                                                child: const Text(
+                                                  "Cancel",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Color(0xFF4B5563),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.pop(dialogContext);
+                                                  await SupabaseService()
+                                                      .logout();
+                                                  if (mounted) {
+                                                    Navigator.of(
+                                                      context,
+                                                    ).pushAndRemoveUntil(
+                                                      MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                                const PhoneNumberScreen(),
+                                                      ),
+                                                      (route) => false,
+                                                    );
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: const Color(
+                                                    0xFFEF4444,
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 14,
+                                                      ),
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                                child: const Text(
+                                                  "Logout",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           },
                         ),
                         const SizedBox(height: 100),
