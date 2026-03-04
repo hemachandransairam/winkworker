@@ -32,7 +32,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
         centerTitle: false,
         titleSpacing: 0,
         title: const Text(
-          'Enter Your Suitable Location',
+          'Enter Your Location',
           style: TextStyle(
             color: Color(0xFF1F2937),
             fontSize: 16,
@@ -142,4 +142,3 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     );
   }
 }
-
