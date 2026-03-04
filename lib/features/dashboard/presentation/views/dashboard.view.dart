@@ -11,14 +11,19 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   bool isAvailable = true;
+  late final String loginDateStr = () {
+    final now = DateTime.now();
+    final day = now.day.toString().padLeft(2, '0');
+    final month = now.month.toString().padLeft(2, '0');
+    return "$day-$month-${now.year}";
+  }();
+
   late final String loginTimeStr = () {
     final now = DateTime.now();
     final hour = now.hour % 12 == 0 ? 12 : now.hour % 12;
     final ampm = now.hour >= 12 ? "PM" : "AM";
     final min = now.minute.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
-    final month = now.month.toString().padLeft(2, '0');
-    return "Logged in at $day-$month-${now.year}, $hour:$min $ampm";
+    return "Logged in at $hour:$min $ampm";
   }();
 
   @override
@@ -212,26 +217,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  loginTimeStr,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    loginDateStr,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "15m / 8h",
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.6),
-                                    fontSize: 13,
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    loginTimeStr,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "15m / 8h",
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.6),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -442,4 +457,3 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
