@@ -15,25 +15,6 @@ class _WorkDetailsScreenState extends State<WorkDetailsScreen> {
     text: "15-01-2024",
   );
 
-  String _employmentType = "Full-time";
-  String _serviceZone = "Downtown Mumbai";
-  String _travelDistance = "10 km";
-
-  final List<String> _specializations = [
-    "Basic Exterior Wash",
-    "Premium Wash",
-    "Deluxe Detail",
-    "Interior Deep Clean",
-    "Wax & Polish",
-    "Engine Cleaning",
-  ];
-
-  final Set<String> _selectedSpecs = {
-    "Basic Exterior Wash",
-    "Premium Wash",
-    "Deluxe Detail",
-  };
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,71 +89,11 @@ class _WorkDetailsScreenState extends State<WorkDetailsScreen> {
                       children: [
                         _buildField("Employee ID", _empIdController),
                         _buildField("Join Date", _joinDateController),
-                        _buildDropdown(
-                          "Employment Type",
-                          _employmentType,
-                          ["Full-time", "Part-time"],
-                          (val) {
-                            setState(() => _employmentType = val!);
-                          },
-                        ),
                         _buildField(
                           "Department",
                           TextEditingController(text: "Mobile Wash Services"),
                         ),
                       ],
-                    ),
-
-                    // Service Area
-                    _buildSectionCard(
-                      title: "Service Area",
-                      icon: Icons.location_on_outlined,
-                      children: [
-                        _buildDropdown(
-                          "Primary Service Zone",
-                          _serviceZone,
-                          ["Downtown Mumbai", "Bandra", "Andheri", "Juhu"],
-                          (val) {
-                            setState(() => _serviceZone = val!);
-                          },
-                        ),
-                        _buildDropdown(
-                          "Maximum Travel Distance",
-                          _travelDistance,
-                          ["5 km", "10 km", "20 km", "No Limit"],
-                          (val) {
-                            setState(() => _travelDistance = val!);
-                          },
-                        ),
-                      ],
-                    ),
-
-                    // Specializations
-                    _buildSectionCard(
-                      title: "Service Specializations",
-                      icon: Icons.settings_outlined,
-                      children:
-                          _specializations.map((spec) {
-                            return CheckboxListTile(
-                              title: Text(
-                                spec,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              value: _selectedSpecs.contains(spec),
-                              onChanged: (val) {
-                                setState(() {
-                                  if (val!) {
-                                    _selectedSpecs.add(spec);
-                                  } else {
-                                    _selectedSpecs.remove(spec);
-                                  }
-                                });
-                              },
-                              controlAffinity: ListTileControlAffinity.leading,
-                              contentPadding: EdgeInsets.zero,
-                              activeColor: const Color(0xFF1E6AFB),
-                            );
-                          }).toList(),
                     ),
 
                     const SizedBox(height: 100),
@@ -254,49 +175,6 @@ class _WorkDetailsScreenState extends State<WorkDetailsScreen> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDropdown(
-    String label,
-    String value,
-    List<String> items,
-    Function(String?) onChanged,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF64748B)),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: value,
-                isExpanded: true,
-                items:
-                    items
-                        .map(
-                          (String val) =>
-                              DropdownMenuItem(value: val, child: Text(val)),
-                        )
-                        .toList(),
-                onChanged: onChanged,
               ),
             ),
           ),

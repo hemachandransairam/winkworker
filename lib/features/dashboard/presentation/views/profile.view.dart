@@ -158,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.work_outline,
                           color: const Color(0xFFA855F7),
                           title: "Work Details",
-                          subtitle: "Schedule, service area",
+                          subtitle: "Employee ID, Department",
                           onTap: () {
                             Navigator.push(
                               context,
@@ -172,7 +172,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.description_outlined,
                           color: const Color(0xFFF97316),
                           title: "Leave Application",
-                          subtitle: "Apply for leave, view history",
+                          subtitle: "Apply for leave",
                           onTap: () {
                             Navigator.push(
                               context,
@@ -481,4 +481,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 }
-
